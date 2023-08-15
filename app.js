@@ -2,12 +2,17 @@ const express = require('express')
 const app = express()
 const port = process.env.port || 3000
 
+const db = require('./models')
+const Todo = db.Todo
+
 app.get('/', (req, res) =>{
   res.send('hello')
 })
 
-app.get('/todos',(req, res) => {
-  res.send('app get /todos page')
+app.get('/todos', (req, res) => {
+	return Todo.findAll()
+		.then((todos) => res.send({ todos }))
+		.catch((err) => res.status(422).json(err))
 })
 
 app.get('/todos/:id',(req, res) => {
