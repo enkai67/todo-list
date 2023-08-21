@@ -1,34 +1,49 @@
+const { urlencoded } = require('express')
 const express = require('express')
 const app = express()
 const port = process.env.port || 3000
 
+const { engine } = require('express-handlebars')
+
 const db = require('./models')
 const Todo = db.Todo
 
+app.engine('.hbs', engine({ extname: '.hbs'}))
+app.set('view engine', '.hbs')
+app.set('views', './views')
+
+app.use(express.urlencoded({ extended: true }))
+
 app.get('/', (req, res) =>{
-  res.send('hello')
+  res.render('index')
 })
 
 app.get('/todos', (req, res) => {
-	return Todo.findAll()
-		.then((todos) => res.send({ todos }))
+	return Todo.findAll({
+    attributes: ['id' , 'name'],
+    raw: true
+  })
+		.then((todos) => res.render('todos', {todos}))
 		.catch((err) => res.status(422).json(err))
+})
+
+app.get('/todos/new',(req, res) => {
+  res.render('new')
+})
+
+app.get('/todos/:id/edit',(req, res) => {
+  res.send(`app get ${req.params.id} page`)
 })
 
 app.get('/todos/:id',(req, res) => {
   res.send(`app get ${req.params.id} page`)
 })
 
-app.get('/todos/new',(req, res) => {
-  res.send('app get /todos/new page')
-})
-
 app.post('/todos',(req, res) => {
-  res.send('app post /todos page')
-})
-
-app.get('/todos/:id/edit',(req, res) => {
-  res.send(`app get ${req.params.id} page`)
+  const name = req.body.name
+  console.log(req)
+  return Todo.create({ name })
+    .then(() => res.redirect('/todos'))
 })
 
 app.put('/todos/:id',(req, res) => {
