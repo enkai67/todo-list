@@ -36,7 +36,12 @@ app.get('/todos/:id/edit',(req, res) => {
 })
 
 app.get('/todos/:id',(req, res) => {
-  res.send(`app get ${req.params.id} page`)
+  const id  = req.params.id
+  return Todo.findByPk(id, {
+    attributes: ['id', 'name'], 
+    raw : true
+  })
+   .then((todo) => {res.render('todo', {todo})})
 })
 
 app.post('/todos',(req, res) => {
