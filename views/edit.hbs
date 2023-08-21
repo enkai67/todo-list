@@ -2,4 +2,7 @@
   <input type="text" placeholder={{todo.name}} name="name" value="{{todo.name}}">
   <button type="submit">Save</button>
   <a href="/todos">back</a>
+  <form action="/todos/{{todo.name}}?_method=DELETE" method="POST" style="display: inline">
+    <button type="submit">delete</button>
+  </form>
 </form>
