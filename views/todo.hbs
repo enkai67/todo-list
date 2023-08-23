@@ -1,3 +1,6 @@
+{{#if message}}
+<div>{{message}}</div>
+{{/if}}
 <p><input type="checkbox" disabled style="display: inline" {{#if todo.isComplete}} checked {{/if}}>name: {{todo.name}}</p>
 <p>id: {{todo.id}}</p>
 <a href="/todos/{{todo.id}}/edit">edit</a>

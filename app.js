@@ -4,6 +4,8 @@ const app = express()
 const port = process.env.port || 3000
 const { engine } = require('express-handlebars')
 const methodOverride = require('method-override')
+const flash = require('connect-flash')
+const session = require('express-session')
 
 const db = require('./models')
 const Todo = db.Todo
@@ -15,6 +17,14 @@ app.set('views', './views')
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
+//session
+app.use(session({
+  secret: 'ThisIsSecret',
+  resave: false,
+  saveUninitialized: false,
+}))
+app.use(flash())
+
 app.get('/', (req, res) =>{
   res.render('index')
 })
@@ -24,7 +34,7 @@ app.get('/todos', (req, res) => {
     attributes: ['id' , 'name', 'isComplete'],
     raw: true
   })
-		.then((todos) => res.render('todos', {todos}))
+		.then((todos) => res.render('todos', {todos, message: req.flash('success')}))
 		.catch((err) => res.status(422).json(err))
 })
 
@@ -38,14 +48,18 @@ app.get('/todos/:id',(req, res) => {
     attributes: ['id', 'name', 'isComplete'], 
     raw : true
   })
-   .then((todo) => {res.render('todo', {todo})})
+   .then((todo) => {
+    res.render('todo', {todo, message: req.flash('success')})})
 })
 
 app.post('/todos',(req, res) => {
   const name = req.body.name
   console.log(req)
   return Todo.create({ name })
-    .then(() => res.redirect('/todos'))
+    .then(() => {
+      req.flash('success', '新增成功！')
+      return res.redirect('/todos')  
+    })
 })
 
 app.get('/todos/:id/edit',(req, res) => {
@@ -60,15 +74,19 @@ app.get('/todos/:id/edit',(req, res) => {
 app.put('/todos/:id',(req, res) => {
   const { name, isComplete }= req.body
   const id = req.params.id
-  
+
   return Todo.update({ name, isComplete: isComplete === 'completed' },{ where: { id }})
-    .then(() => {res.redirect(`/todos/${id}`)})
+    .then(() => {
+      req.flash('success', '修改成功！')
+      res.redirect(`/todos/${id}`)})
 })
 
 app.delete('/todos/:id',(req, res) => {
   const id = req.params.id
   return Todo.destroy({where : {id}})
-    .then(() => res.redirect('/todos'))
+    .then(() => {
+      req.flash('success','刪除成功！！')
+      res.redirect('/todos')})
 })
 
 app.listen(port, () =>{
