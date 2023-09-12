@@ -1,0 +1,47 @@
+<h2>Register</h2>
+{{> message}}
+
+<form action="/users", method="POST">
+  <div>
+    <div>
+      <label for="name">Name</label>
+    </div>
+    <div>
+      <input name="name" type="text" placeholder="Enter Name">
+    </div>
+  </div>
+
+  <div>
+    <div>
+      <label for="email">Email</label>
+    </div>
+    <div>
+      <input name="email" type="text" placeholder="Enter Email">
+    </div>
+  </div>
+
+  <div>
+    <div>
+      <label for="password">Password</label>
+    </div>
+    <div>
+      <input name="password" type="text" placeholder="Enter password">
+    </div>
+  </div>
+
+  <div>
+    <div>
+      <label for="confirmPassword">Confirm password</label>
+    </div>
+    <div>
+      <input name="confirmPassword" type="text" placeholder="Confirm password">
+    </div>
+  </div>
+
+  <button type="submit">Register</button>
+</form>
+
+<div>
+  <span>Already have an account?</span> 
+  <a href="/login">Login</a>
+</div>
