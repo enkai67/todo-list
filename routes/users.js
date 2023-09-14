@@ -6,14 +6,22 @@ const User = db.User
 
 router.post('/', (req, res, next) => {
 	const {name, email, password, confirmPassword} = req.body
+	console.log(email)
+
+	emailRule = /^\w+((-\w+)|(\.\w+)|(\+\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/
+
+	if ( email.search(emailRule) === -1 ){
+		req.flash('error', '請輸入正確email格式')
+		return res.redirect('back')
+	}
 	
 	if ( !email || !password ) {
 		req.flash('error', 'email及password為必填')
 		return res.redirect('back')
 	}
 
-	if ( password.toString.length > 8){
-		req.flash('error', '長度需大於8位英數字')
+	if ( password.length < 4){
+		req.flash('error', '密碼至少需填8位英數字')
 		return res.redirect('back')
 	}
 

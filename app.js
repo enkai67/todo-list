@@ -9,6 +9,7 @@ const methodOverride = require('method-override')
 const flash = require('connect-flash')
 const session = require('express-session')
 const { AxiosHeaders } = require('axios')
+const passport = require('passport')
 
 if( process.env.NODE_ENV = 'development') {
   require('dotenv').config()
@@ -20,6 +21,7 @@ app.set('views', './views')
 
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use(passport.initialize())
 
 //session
 app.use(session({
