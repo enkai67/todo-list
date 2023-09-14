@@ -15,7 +15,7 @@ passport.use(new localStrategy({ usernameField: 'email' }, (username, password, 
   })
     .then((user) => {
       if ( !user || user.password !== password){
-        return done(null, false, { message: 'email 或密碼輸入錯誤'})
+        return done(null, false, { message: 'email或密碼輸入錯誤'})
       }
       return done(null, user)
     })
@@ -30,14 +30,21 @@ passport.serializeUser((user, done) => {
   return done(null, { id, name, email })
 })
 
+passport.deserializeUser((user, done) => {
+  done(null, { id: user.id })
+})
+
+
 const todos = require('./todos')
 const users = require('./users')
+const authHandler = require('../middlewares/auth-handler')
+const { nextTick } = require('process')
 
-router.use('/todos', todos)
+router.use('/todos', authHandler, todos)
 router.use('/users', users)
 
 router.get('/',(req, res) => {
-  res.send('index')
+  res.render('index')
 })
 
 router.get('/login', (req, res) => {
@@ -55,7 +62,12 @@ router.post('/login', passport.authenticate('local', {
 }))
 
 router.post('/logout', (req, res) => {
-  return res.send('logout')
+  req.logOut((error) => {
+    if (error) {
+      next(error)
+    }
+    return res.redirect('/login')
+  })
 })
 
 

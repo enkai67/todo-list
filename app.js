@@ -15,6 +15,13 @@ if( process.env.NODE_ENV = 'development') {
   require('dotenv').config()
 }
 
+//session
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}))
+
 app.engine('.hbs', engine({ extname: '.hbs'}))
 app.set('view engine', '.hbs')
 app.set('views', './views')
@@ -22,13 +29,8 @@ app.set('views', './views')
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(passport.initialize())
+app.use(passport.session())
 
-//session
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-}))
 app.use(flash())
 app.use(messageHandler)
 app.use(router)
