@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const bcrypt = require('bcryptjs')
 
 const db = require('../models')
 const User = db.User
@@ -36,7 +37,9 @@ router.post('/', (req, res, next) => {
 				req.flash('error', 'email已註冊')
 				return
 			}
-			return User.create({email, name, password})
+
+			return bcrypt.hash(password, 10)
+				.then((hash) => User.create({email, name, password: hash}))
 		})
 		.then((user) => {
 			if (!user){
